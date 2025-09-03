@@ -10,8 +10,11 @@
 #define UI_MAINWINDOW_H
 
 #include <QtCore/QVariant>
+#include <QtGui/QAction>
 #include <QtWidgets/QApplication>
 #include <QtWidgets/QMainWindow>
+#include <QtWidgets/QMenu>
+#include <QtWidgets/QMenuBar>
 #include <QtWidgets/QWidget>
 
 QT_BEGIN_NAMESPACE
@@ -20,6 +23,8 @@ class Ui_MainWindow
 {
 public:
     QWidget *centralwidget;
+    QMenuBar *menuBar;
+    QMenu *menuSetting;
 
     void setupUi(QMainWindow *MainWindow)
     {
@@ -29,6 +34,14 @@ public:
         centralwidget = new QWidget(MainWindow);
         centralwidget->setObjectName("centralwidget");
         MainWindow->setCentralWidget(centralwidget);
+        menuBar = new QMenuBar(MainWindow);
+        menuBar->setObjectName("menuBar");
+        menuBar->setGeometry(QRect(0, 0, 800, 21));
+        menuSetting = new QMenu(menuBar);
+        menuSetting->setObjectName("menuSetting");
+        MainWindow->setMenuBar(menuBar);
+
+        menuBar->addAction(menuSetting->menuAction());
 
         retranslateUi(MainWindow);
 
@@ -38,6 +51,7 @@ public:
     void retranslateUi(QMainWindow *MainWindow)
     {
         MainWindow->setWindowTitle(QCoreApplication::translate("MainWindow", "MainWindow", nullptr));
+        menuSetting->setTitle(QCoreApplication::translate("MainWindow", "Programm", nullptr));
     } // retranslateUi
 
 };

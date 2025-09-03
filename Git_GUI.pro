@@ -14,14 +14,17 @@ INCLUDEPATH += "C:/Users/Neofit/QT_Projects/Git_GUI/include"
 SOURCES += \
     main.cpp \
     mainwindow.cpp \
+    setting_window.cpp \
     work_git.cpp
 
 HEADERS += \
     mainwindow.h \
+    setting_window.h \
     work_git.h
 
 FORMS += \
-    mainwindow.ui
+    mainwindow.ui \
+    setting_window.ui
 
 # Default rules for deployment.
 qnx: target.path = /tmp/$${TARGET}/bin
