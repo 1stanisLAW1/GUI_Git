@@ -4,6 +4,8 @@
 #include "work_git.h"
 
 #include <QFileDialog>
+#include <QGraphicsView>
+#include <QGraphicsWidget>
 #include <QHBoxLayout>
 #include <QInputDialog>
 #include <QLabel>
@@ -26,11 +28,10 @@ MainWindow::MainWindow(QWidget *parent)
 
     QHBoxLayout* layout = new QHBoxLayout();
     QVBoxLayout* central_layout = new QVBoxLayout();
-    QPushButton* btn_path = new QPushButton("Choose a path");
-    QPushButton* btn_clear = new QPushButton("Clear console");
     QLabel *lbl = new QLabel("Link to GitHab project");
     QLineEdit* dr = new QLineEdit();
-    dr->setFixedSize(600,20);
+    QWidget* rest_widget =  cloning_widget();
+    dr->resize(600,20);
 
     QAction* setting = new QAction("Setting");
     QAction* helper = new QAction("How to get token");
@@ -49,9 +50,11 @@ MainWindow::MainWindow(QWidget *parent)
     wg = new work_git();
 
     QTabWidget* tab_widget = new QTabWidget();
-    tab_widget->setFixedSize(600,300);
-    tab_widget->addTab(cloning_widget(),"Cloning");
+    tab_widget->setTabPosition(QTabWidget::West);
+    tab_widget->resize(600,300);
     tab_widget->addTab(push_widget(),"Push");
+    tab_widget->addTab(create_repo_widget(),"Create");
+    tab_widget->addTab(history_widget(),"History"); //Current work
 
     QThread* thread = new QThread();
     wg->moveToThread(thread);
@@ -130,9 +133,8 @@ MainWindow::MainWindow(QWidget *parent)
 
     layout->addWidget(lbl);
     layout->addWidget(dr);
-    layout->addWidget(btn_path);
-    layout->addWidget(btn_clear);
     central_layout->addLayout(layout);
+    central_layout->addWidget(rest_widget);
     central_layout->addWidget(tab_widget);
     central_layout->addWidget(cons);
 
@@ -174,12 +176,18 @@ QWidget *MainWindow::cloning_widget()
     QHBoxLayout* central_layout = new QHBoxLayout();
     btn_clone = new QPushButton("Clone");
     btn_ls = new QPushButton("Сheck directory");
+    btn_path = new QPushButton("Choose a path");
+    btn_clear = new QPushButton("Clear console");
 
-    btn_clone->setFixedSize(100,30);
-    btn_ls->setFixedSize(100,30);
+    btn_clone->resize(100,30);
+    btn_ls->resize(100,30);
+    btn_path->resize(100,30);
+    btn_clear->resize(100,30);
 
     central_layout->addWidget(btn_clone);
     central_layout->addWidget(btn_ls);
+    central_layout->addWidget(btn_path);
+    central_layout->addWidget(btn_clear);
 
     widget->setLayout(central_layout);
 
@@ -205,8 +213,8 @@ QWidget *MainWindow::push_widget()
     commit_new = new QLineEdit("First commit");
     commit_old = new QLineEdit("Next commit");
     branch_line = new QLineEdit("master");
-    btn_push->setFixedSize(100,30);
-    btn_push_old->setFixedSize(100,30);
+    btn_push->resize(100,30);
+    btn_push_old->resize(100,30);
 
     for_new_repo_layout->addWidget(btn_push);
     for_new_repo_layout->addWidget(lbl_commit);
@@ -242,7 +250,7 @@ void MainWindow::help_dialog()
     QVBoxLayout* central_layout = new QVBoxLayout();
 
     QPushButton* closeButton = new QPushButton("Close");
-    closeButton->setFixedSize(40,30);
+    closeButton->resize(40,30);
     QPushButton* next_btn = new QPushButton("->");
     QPushButton* back_btn = new QPushButton("<-");
     back_btn->setEnabled(false);
@@ -334,6 +342,38 @@ void MainWindow::help_dialog()
     dialog->show();
 }
 
+QWidget *MainWindow::history_widget()
+{
+    QWidget* hist_widdget = new QWidget();
+    QHBoxLayout* central_layout = new QHBoxLayout();
+
+    QGraphicsView* graphicsView = new QGraphicsView();
+    scene = new QGraphicsScene();
+    graphicsView->setScene(scene);
+
+    table = new QTableWidget();
+
+    table->setColumnCount(4);
+    QStringList headers;
+    headers << "Remote URL" << "Branch" << "Commit" << "Date";
+    table->setHorizontalHeaderLabels(headers);
+
+    central_layout->addWidget(graphicsView);
+    central_layout->addWidget(table);
+    hist_widdget->setLayout(central_layout);
+    return hist_widdget;
+}
+
+QWidget *MainWindow::create_repo_widget()
+{
+    QWidget* widget = new QWidget();
+    QVBoxLayout* central_layout = new QVBoxLayout();
+    QLabel* lbl = new QLabel("it's widget for create and remove repo");
+
+    central_layout->addWidget(lbl);
+    widget->setLayout(central_layout);
+    return widget;
+}
 
 void MainWindow::set_text_in_console(QString message)
 {

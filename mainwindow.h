@@ -6,6 +6,8 @@
 #include "qtextedit.h"
 #include "work_git.h"
 #include <QMainWindow>
+#include <QGraphicsScene>
+#include <QTableWidget>
 
 QT_BEGIN_NAMESPACE
 namespace Ui {
@@ -25,6 +27,9 @@ public:
     QWidget* cloning_widget();
     QWidget* push_widget();
     void help_dialog();
+    QWidget* history_widget();
+    QWidget* create_repo_widget();
+
 public slots:
     void set_text_in_console(QString message);
 
@@ -38,6 +43,8 @@ private:
     QPushButton* btn_ls;
     QPushButton* btn_push;
     QPushButton* btn_push_old;
+    QPushButton* btn_path;
+    QPushButton* btn_clear;
     QLineEdit* commit_new;
     QLineEdit* commit_old;
     work_git* wg;
@@ -46,5 +53,7 @@ private:
     QDialog* dialog;
     int count = 1;
     QStringList text;
+    QGraphicsScene* scene;
+    QTableWidget* table;
 };
 #endif // MAINWINDOW_H
