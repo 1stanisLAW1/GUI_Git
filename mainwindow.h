@@ -24,6 +24,7 @@ public:
     void select_path();
     QWidget* cloning_widget();
     QWidget* push_widget();
+    void help_dialog();
 public slots:
     void set_text_in_console(QString message);
 
@@ -42,5 +43,8 @@ private:
     work_git* wg;
     QLineEdit* token_line;
     QLineEdit* branch_line;
+    QDialog* dialog;
+    int count = 1;
+    QStringList text;
 };
 #endif // MAINWINDOW_H

@@ -14,6 +14,22 @@
    <string>MainWindow</string>
   </property>
   <widget class="QWidget" name="centralwidget"/>
+  <widget class="QMenuBar" name="menuBar">
+   <property name="geometry">
+    <rect>
+     <x>0</x>
+     <y>0</y>
+     <width>800</width>
+     <height>21</height>
+    </rect>
+   </property>
+   <widget class="QMenu" name="menuSetting">
+    <property name="title">
+     <string>Programm</string>
+    </property>
+   </widget>
+   <addaction name="menuSetting"/>
+  </widget>
  </widget>
  <resources/>
  <connections/>

@@ -1,7 +1,6 @@
 #ifndef WORK_GIT_H
 #define WORK_GIT_H
 
-#include "error_handling.h"
 #include <git2.h>
 #include <QObject>
 
