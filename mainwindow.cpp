@@ -33,7 +33,7 @@ MainWindow::MainWindow(QWidget *parent)
     QWidget* rest_widget =  cloning_widget();
     dr->resize(600,20);
 
-    QAction* setting = new QAction("Setting");
+    QAction* setting = new QAction("Setting"); // In development
     QAction* helper = new QAction("How to get token");
     ui->menuSetting->addAction(setting);
     ui->menuSetting->addAction(helper);
@@ -53,8 +53,8 @@ MainWindow::MainWindow(QWidget *parent)
     tab_widget->setTabPosition(QTabWidget::West);
     tab_widget->resize(600,300);
     tab_widget->addTab(push_widget(),"Push");
-    tab_widget->addTab(create_repo_widget(),"Create");
-    tab_widget->addTab(history_widget(),"History");
+    tab_widget->addTab(create_repo_widget(),"Create");// In development
+    tab_widget->addTab(history_widget(),"History"); //In development
 
     QThread* thread = new QThread();
     wg->moveToThread(thread);

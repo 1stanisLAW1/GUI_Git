@@ -12,15 +12,13 @@
 
 work_git::work_git(QObject *parent)
     : QObject{parent}
-{
-   // qDebug() << "Libgit2 version:" << LIBGIT2_VER_MAJOR << LIBGIT2_VER_MINOR << LIBGIT2_VER_REVISION;
-}
+{}
 
 void work_git::clone_repo(QStringList list)
 {
     git_libgit2_init();
     QString url = list.at(0);
-    int last_Slash_Pos = url.lastIndexOf('/');  // Находим последний слеш
+    int last_Slash_Pos = url.lastIndexOf('/');  // search last /
     QString last_part = url.mid(last_Slash_Pos+1);
 
     QString path = list.at(1)+last_part+"/";
