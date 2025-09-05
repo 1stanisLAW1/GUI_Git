@@ -54,7 +54,7 @@ MainWindow::MainWindow(QWidget *parent)
     tab_widget->resize(600,300);
     tab_widget->addTab(push_widget(),"Push");
     tab_widget->addTab(create_repo_widget(),"Create");
-    tab_widget->addTab(history_widget(),"History"); //Current work
+    tab_widget->addTab(history_widget(),"History");
 
     QThread* thread = new QThread();
     wg->moveToThread(thread);
