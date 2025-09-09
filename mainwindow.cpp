@@ -1,8 +1,11 @@
 #include "mainwindow.h"
+#include "qtimer.h"
 #include "setting_window.h"
 #include "ui_mainwindow.h"
 #include "work_git.h"
 
+#include <QCheckBox>
+#include <QComboBox>
 #include <QFileDialog>
 #include <QGraphicsView>
 #include <QGraphicsWidget>
@@ -19,6 +22,14 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    QTimer* timer = new QTimer(this);
+    connect(timer,&QTimer::timeout,this,[=](){
+        QString count_str =  QString::number(description->toPlainText().size())+" / 350";
+        current_count_lbl->setText(count_str);
+    });
+    timer->start(100);
+
 
     text.append(" ");
     text.append("https://github.com/settings/tokens");
@@ -367,10 +378,67 @@ QWidget *MainWindow::history_widget()
 QWidget *MainWindow::create_repo_widget()
 {
     QWidget* widget = new QWidget();
-    QVBoxLayout* central_layout = new QVBoxLayout();
-    QLabel* lbl = new QLabel("it's widget for create and remove repo");
 
-    central_layout->addWidget(lbl);
+    QVBoxLayout* central_layout = new QVBoxLayout();
+
+    QLabel* name_lbl = new QLabel("Repository name *");
+    QLineEdit* name_repo = new QLineEdit();
+    QLabel* description_lbl = new QLabel("Description");
+    description = new QTextEdit("");
+
+    QHBoxLayout* combobox_layout = new QHBoxLayout();
+
+    QLabel* isPrivate_lbl = new QLabel("Choose visibility *");
+    QComboBox* choose_private = new QComboBox();
+    choose_private->addItem("Public");
+    choose_private->addItem("Private");
+
+    QHBoxLayout* checkbox_layout = new QHBoxLayout();
+
+    QLabel* read_me_lbl = new QLabel("Add README");
+    QCheckBox* add_readme = new QCheckBox();
+
+    QPushButton* btn_create = new QPushButton("Create repository");
+
+    current_count_lbl = new QLabel("0 / 350");
+
+    connect(btn_create,&QPushButton::clicked,this,[=](){
+        if(name_repo->text() == ""){
+            set_text_in_console("Error: Specify the repository name");
+            return;
+        }
+        else if(description->toPlainText().size()>350){
+            set_text_in_console("Error: The description is too long");
+            return;
+        }else if (token_line->text()==""){
+            set_text_in_console("Error: Specify the token line");
+        }
+        if(add_readme->checkState() == Qt::Unchecked){
+            checked = false;
+        }else{
+            checked = true;
+        }
+        wg->create_repositori(token_line->text(),name_repo->text(),description->toPlainText(),choose_private->currentText(),checked);
+    });
+
+    central_layout->addWidget(name_lbl);
+    central_layout->addWidget(name_repo);
+
+    central_layout->addWidget(description_lbl);
+    central_layout->addWidget(description);
+
+    central_layout->addWidget(current_count_lbl);
+
+    combobox_layout->addWidget(isPrivate_lbl);
+    combobox_layout->addWidget(choose_private);
+    central_layout->addLayout(combobox_layout);
+
+    checkbox_layout->addWidget(read_me_lbl);
+    checkbox_layout->addWidget(add_readme);
+    central_layout->addLayout(checkbox_layout);
+
+    central_layout->addWidget(btn_create);
+
     widget->setLayout(central_layout);
     return widget;
 }

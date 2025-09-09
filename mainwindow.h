@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 
+#include "qlabel.h"
 #include "qlineedit.h"
 #include "qpushbutton.h"
 #include "qtextedit.h"
@@ -55,5 +56,8 @@ private:
     QStringList text;
     QGraphicsScene* scene;
     QTableWidget* table;
+    QLabel* current_count_lbl;
+    QTextEdit* description;
+    bool checked = false;
 };
 #endif // MAINWINDOW_H

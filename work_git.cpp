@@ -6,6 +6,11 @@
 #include "qlineedit.h"
 #include <QInputDialog>
 #include <QTimer>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include <QDir>
 
@@ -497,4 +502,60 @@ void work_git::clear_resours()
     if (parent_commit) git_commit_free(parent_commit);
     if (head) git_reference_free(head);
     git_repository_free(repo);
+}
+
+void work_git::create_repositori(const QString &token, const QString &name, const QString &description, const QString &private_, bool readme_)
+{
+    m_manager = new QNetworkAccessManager(this);
+
+    QJsonObject json;
+    json["name"] = name;
+    json["description"] = description;
+    json["private"] = private_;
+    json["readme"] = readme_;
+
+    QNetworkRequest request(QUrl("https://api.github.com/user/repos"));
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setRawHeader("Authorization", ("Bearer " + token).toUtf8());
+    request.setRawHeader("User-Agent", "Qt-GitHub-Client");
+    request.setRawHeader("Accept", "application/vnd.github.v3+json");
+
+    QNetworkReply *reply = m_manager->post(request, QJsonDocument(json).toJson());
+
+    connect(reply, &QNetworkReply::finished, [this, reply, name]() {
+        handleResponse(reply, name);
+    });
+}
+
+void work_git::handleResponse(QNetworkReply *reply, const QString &repoName)
+{
+    if (reply->error() == QNetworkReply::NoError) {
+        QJsonDocument response = QJsonDocument::fromJson(reply->readAll());
+        QJsonObject json = response.object();
+
+        QString cloneUrl = json["clone_url"].toString();
+        QString sshUrl = json["ssh_url"].toString();
+        QString fullName = json["full_name"].toString();
+
+        emit message_signal("Repository created successfully - ✓");
+        emit message_signal("HTTPS URL: " + cloneUrl);
+    } else {
+        QString errorMsg = QString("Error: %1 - %2")
+        .arg(reply->error())
+            .arg(reply->errorString());
+
+        QByteArray responseData = reply->readAll();
+        if (!responseData.isEmpty()) {
+            QJsonDocument errorDoc = QJsonDocument::fromJson(responseData);
+            if (errorDoc.isObject()) {
+                QJsonObject errorObj = errorDoc.object();
+                if (errorObj.contains("message")) {
+                    errorMsg += "\nGitHub: " + errorObj["message"].toString();
+                }
+            }
+        }
+        emit message_signal(errorMsg);
+    }
+
+    reply->deleteLater();
 }
