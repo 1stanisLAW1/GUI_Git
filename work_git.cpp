@@ -503,7 +503,7 @@ void work_git::clear_resours()
     if (head) git_reference_free(head);
     git_repository_free(repo);
 }
-//new in vers_1.3.3
+//new in vers_1.4
 void work_git::create_repositori(const QString &token, const QString &name, const QString &description, const QString &private_, bool readme_)
 {
     m_manager = new QNetworkAccessManager(this);
