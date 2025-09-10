@@ -465,28 +465,8 @@ void work_git::push_project_in_repo(QString remoteUrl, QString repoPath, QString
     if (push_error != GIT_OK) {
         const git_error* e = git_error_last();
         emit message_signal(QString("Push failed: %1").arg(e ? e->message : "Unknown error"));
-
-        // Let's try to do a pull before the repeated push.
-        if (remote_branch_exists) {
-            emit message_signal("Attempting to pull changes first...");
-
-            git_fetch_options fetch_opts = GIT_FETCH_OPTIONS_INIT;
-            fetch_opts.callbacks.credentials = push_opts.callbacks.credentials;
-            fetch_opts.callbacks.payload = push_opts.callbacks.payload;
-
-            if (git_remote_fetch(remote, NULL, &fetch_opts, "fetch") == GIT_OK) {
-                // After a successful fetch, we try to push again.
-                push_error = git_remote_push(remote, &refspecs, &push_opts);
-                if (push_error != GIT_OK) {
-                    const git_error* e = git_error_last();
-                    emit message_signal(QString("Push still failed after fetch: %1").arg(e->message));
-                } else {
-                    emit message_signal("Successfully pushed after fetch - ✓");
-                }
-            }
-        }
     } else {
-        emit message_signal(QString("Successfully pushed to branch %1 - ✓").arg(branch_name));
+        emit message_signal(QString("Successfully force-pushed to branch %1 - ✓").arg(branch_name));
     }
 
     // Resource Cleanup
