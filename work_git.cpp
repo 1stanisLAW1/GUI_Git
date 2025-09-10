@@ -457,7 +457,8 @@ void work_git::push_project_in_repo(QString remoteUrl, QString repoPath, QString
     };
 
     QByteArray refspecBytes = refspec_str.toUtf8();
-    git_strarray refspecs = { (char**)&refspec, 1 };
+    const char* refspec_cstr = refspecBytes.constData();
+    git_strarray refspecs = { (char**)&refspec_cstr, 1 };
 
     emit message_signal("The process of pushing...");
 
