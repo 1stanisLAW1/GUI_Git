@@ -16,12 +16,14 @@ public:
     void push_project(QString remoteUrl,QString repoPath,QString commitMsg,QString token, QString name,const char* refspec,const char *branch_name);
     void push_project_in_repo(QString remoteUrl,QString repoPath,QString commitMsg,QString token, QString name,const char* refspec,const char *branch_name);
     void clear_resours();
-    void create_repositori(const QString &token,const QString &name,const QString &description,const QString &private_,bool readme_);
+    void create_repositori(const QString &token,const QString &name,const QString &description,bool private_,bool readme_);
+    void delete_repo(const QString &token,const QString &url_repo);
 signals:
     void message_signal(QString message);
     void tok_set();
 private:
-    void handleResponse(QNetworkReply *reply, const QString &repoName);
+    void handle_response(QNetworkReply *reply, const QString &repoName);
+    void handle_delete_response(QNetworkReply *reply, const QString &repoName);
     QString tok;
     bool pause = true;
     git_repository* repo = nullptr;

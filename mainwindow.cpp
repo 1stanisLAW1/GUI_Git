@@ -133,9 +133,18 @@ MainWindow::MainWindow(QWidget *parent)
         list.append(token_line->text());
         list.append(branch_line->text());
 
+        qDebug()<<list;
         wg->check_push(list,1);
 
         list.clear();
+    });
+    connect(btn_delete_repo,&QPushButton::clicked,wg,[=,this](){
+        if(token_line->text().isEmpty()){
+            set_text_in_console("Error: Fill in the token field");
+        }else if(dr->text().isEmpty()){
+            set_text_in_console("Error: Fill in the URL field");
+        }
+        wg->delete_repo(token_line->text(),dr->text());
     });
 
     cons = console_widget();
@@ -189,6 +198,7 @@ QWidget *MainWindow::cloning_widget()
     btn_ls = new QPushButton("Сheck directory");
     btn_path = new QPushButton("Choose a path");
     btn_clear = new QPushButton("Clear console");
+    btn_delete_repo = new QPushButton("Delete repo");
 
     btn_clone->resize(100,30);
     btn_ls->resize(100,30);
@@ -199,6 +209,8 @@ QWidget *MainWindow::cloning_widget()
     central_layout->addWidget(btn_ls);
     central_layout->addWidget(btn_path);
     central_layout->addWidget(btn_clear);
+    central_layout->addWidget(btn_delete_repo);
+
 
     widget->setLayout(central_layout);
 
@@ -418,7 +430,14 @@ QWidget *MainWindow::create_repo_widget()
         }else{
             checked = true;
         }
-        wg->create_repositori(token_line->text(),name_repo->text(),description->toPlainText(),choose_private->currentText(),checked);
+
+        if(choose_private->currentText() == "Public"){
+            priv = false;
+        }else{
+            priv = true;
+        }
+
+        wg->create_repositori(token_line->text(),name_repo->text(),description->toPlainText(),priv,checked);
     });
 
     central_layout->addWidget(name_lbl);

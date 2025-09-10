@@ -46,6 +46,7 @@ private:
     QPushButton* btn_push_old;
     QPushButton* btn_path;
     QPushButton* btn_clear;
+    QPushButton *btn_delete_repo;
     QLineEdit* commit_new;
     QLineEdit* commit_old;
     work_git* wg;
@@ -59,5 +60,6 @@ private:
     QLabel* current_count_lbl;
     QTextEdit* description;
     bool checked = false;
+    bool priv = true;
 };
 #endif // MAINWINDOW_H

@@ -69,7 +69,7 @@ void work_git::check_push(QStringList list, int num)
     QString repoPath = QDir::toNativeSeparators(list.at(1));
     QString commitMsg = list.size() > 2 ? list.at(2) : "Initial commit";
 
-    QString branchName = list.at(4);
+    QString branchName = list.at(4);//3
     QByteArray branchNameBytes = branchName.toUtf8();
     QByteArray refspecBytes = QString("refs/heads/%1:refs/heads/%1")
                                   .arg(list.at(4))
@@ -80,7 +80,7 @@ void work_git::check_push(QStringList list, int num)
 
 
 
-    QString token = list.at(3);
+    QString token = list.at(3);//2
 
     QDir dir(repoPath);
     if (!dir.exists()) {
@@ -504,7 +504,7 @@ void work_git::clear_resours()
     git_repository_free(repo);
 }
 //new in vers_1.4
-void work_git::create_repositori(const QString &token, const QString &name, const QString &description, const QString &private_, bool readme_)
+void work_git::create_repositori(const QString &token, const QString &name, const QString &description, bool private_, bool readme_)
 {
     m_manager = new QNetworkAccessManager(this);
 
@@ -512,7 +512,7 @@ void work_git::create_repositori(const QString &token, const QString &name, cons
     json["name"] = name;
     json["description"] = description;
     json["private"] = private_;
-    json["readme"] = readme_;
+    json["auto_init"] = readme_;
 
     QNetworkRequest request(QUrl("https://api.github.com/user/repos"));
     request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
@@ -523,11 +523,58 @@ void work_git::create_repositori(const QString &token, const QString &name, cons
     QNetworkReply *reply = m_manager->post(request, QJsonDocument(json).toJson());
 
     connect(reply, &QNetworkReply::finished, [this, reply, name]() {
-        handleResponse(reply, name);
+        handle_response(reply, name);
     });
 }
 
-void work_git::handleResponse(QNetworkReply *reply, const QString &repoName)
+void work_git::delete_repo(const QString &token, const QString &url_repo)
+{
+    QString base = "https://github.com/";
+
+    int startPos = base.length();
+    int endPos = url_repo.indexOf('/', startPos);
+
+    QString owner = url_repo.mid(startPos, endPos - startPos);
+
+    int start_pos_ = base.length()+owner.length();
+    int endPos_ = url_repo.indexOf('.', start_pos_);
+
+    QString repo_name = url_repo.mid(start_pos_+1, endPos_);
+
+    if (repo_name.endsWith(".git")) {
+        repo_name = repo_name.left(repo_name.length() - 4);
+    }
+
+    m_manager = new QNetworkAccessManager(this);
+
+    QUrl url(QString("https://api.github.com/repos/%1/%2").arg(owner, repo_name));
+
+
+    QNetworkRequest request(url);
+    request.setHeader(QNetworkRequest::ContentTypeHeader, "application/json");
+    request.setRawHeader("Authorization",
+                         QString("token %1").arg(token).toUtf8());
+    request.setRawHeader("User-Agent", "Qt-GitHub-Client");
+    request.setRawHeader("Accept", "application/vnd.github.v3+json");
+
+    QNetworkReply *reply = m_manager->deleteResource(request);
+
+    connect(reply, &QNetworkReply::finished, [this, reply, repo_name]() {
+        handle_delete_response(reply, repo_name);
+    });
+}
+
+void work_git::handle_delete_response(QNetworkReply *reply, const QString &repoName)
+{
+    if (reply->error() == QNetworkReply::NoError) {
+        emit message_signal("Repository " + repoName + " deleted successfully");
+    } else {
+        emit message_signal("Error deleting repository: " + reply->errorString());
+    }
+    reply->deleteLater();
+}
+
+void work_git::handle_response(QNetworkReply *reply, const QString &repoName)
 {
     if (reply->error() == QNetworkReply::NoError) {
         QJsonDocument response = QJsonDocument::fromJson(reply->readAll());
