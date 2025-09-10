@@ -69,7 +69,7 @@ void work_git::check_push(QStringList list, int num)
     QString repoPath = QDir::toNativeSeparators(list.at(1));
     QString commitMsg = list.size() > 2 ? list.at(2) : "Initial commit";
 
-    QString branchName = list.at(4);//3
+    QString branchName = list.at(4);
     QByteArray branchNameBytes = branchName.toUtf8();
     QByteArray refspecBytes = QString("refs/heads/%1:refs/heads/%1")
                                   .arg(list.at(4))
@@ -80,7 +80,7 @@ void work_git::check_push(QStringList list, int num)
 
 
 
-    QString token = list.at(3);//2
+    QString token = list.at(3);
 
     QDir dir(repoPath);
     if (!dir.exists()) {
