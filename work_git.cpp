@@ -468,7 +468,7 @@ void work_git::push_project_in_repo(QString remoteUrl, QString repoPath, QString
         emit message_signal(QString("Push failed: %1").arg(e ? e->message : "Unknown error"));
     } else {
         emit message_signal(QString("Successfully force-pushed to branch %1 - ✓").arg(branch_name));
-    }
+    }//vers_1.5.3
 
     // Resource Cleanup
     clear_resours();
