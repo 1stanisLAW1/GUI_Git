@@ -439,9 +439,7 @@ void work_git::push_project_in_repo(QString remoteUrl, QString repoPath, QString
     }
 
     // Push settings considering the existence of a branch
-    QString refspec_str = remote_branch_exists
-                              ? QString("+refs/heads/%1:refs/heads/%1").arg(branch_name)  // Forced push
-                              : QString("refs/heads/%1:refs/heads/%1").arg(branch_name);  //  Regular push
+    QString refspec_str = QString("+refs/heads/%1:refs/heads/%1").arg(branch_name);
 
     // We are performing a push
     git_push_options push_opts;

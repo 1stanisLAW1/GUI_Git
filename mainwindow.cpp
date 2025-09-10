@@ -133,7 +133,6 @@ MainWindow::MainWindow(QWidget *parent)
         list.append(token_line->text());
         list.append(branch_line->text());
 
-        qDebug()<<list;
         wg->check_push(list,1);
 
         list.clear();
