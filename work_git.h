@@ -9,6 +9,10 @@ class work_git : public QObject
 {
     Q_OBJECT
 public:
+    struct CredentialsPayload {
+        QString username;
+        QString token;
+    };
     explicit work_git(QObject *parent = nullptr);
     void clone_repo(QStringList list);
     void check_direct(QString path);

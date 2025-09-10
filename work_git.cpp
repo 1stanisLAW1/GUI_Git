@@ -445,14 +445,16 @@ void work_git::push_project_in_repo(QString remoteUrl, QString repoPath, QString
     git_push_options push_opts;
     git_push_options_init(&push_opts, GIT_PUSH_OPTIONS_VERSION);
 
+    CredentialsPayload credentials = {name, token};
+    push_opts.callbacks.payload = &credentials;
+
     push_opts.callbacks.credentials = [](git_cred **out, const char *url, const char *username_from_url,
                                          unsigned int allowed_types, void *payload) -> int {
-        QString *token = static_cast<QString*>(payload);
-        QString name = *static_cast<QString*>(payload);
-        return git_cred_userpass_plaintext_new(out, name.toUtf8().constData(), token->toUtf8().constData());
+        CredentialsPayload *creds = static_cast<CredentialsPayload*>(payload);
+        return git_cred_userpass_plaintext_new(out,
+                                               creds->username.toUtf8().constData(),
+                                               creds->token.toUtf8().constData());
     };
-    push_opts.callbacks.payload = &token;
-    push_opts.callbacks.payload = &name;
 
     QByteArray refspecBytes = refspec_str.toUtf8();
     git_strarray refspecs = { (char**)&refspec, 1 };
